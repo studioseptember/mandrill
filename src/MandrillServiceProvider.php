@@ -14,7 +14,6 @@ class MandrillServiceProvider extends ServiceProvider {
 
 	public function boot()
 	{
-		$this->package('sairiz/mandrill', null, __DIR__);
 	}	
 
 	/**
@@ -24,15 +23,16 @@ class MandrillServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['mandrill'] = $this->app->share(function($app)
+		$this->app->bind('mandrill', function($app)
 		{
-			return new Mandrill($app['config']['mandrill::apiKey']);
+			$key = config('packages.sairiz.mandrill.config.apiKey');
+			return new Mandrill($key);
 		});
 
 		$this->app->booting(function()
 		{
 			$loader = AliasLoader::getInstance();
-			$loader->alias('Email','Sairiz\Mandrill\Facades\Mandrill');
+			$loader->alias('Email',\Sairiz\Mandrill\Facades\Mandrill::class);
 		});
 	}
 
